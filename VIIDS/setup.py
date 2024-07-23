@@ -24,3 +24,36 @@ def mse(y, y_hat):
     # divide by the number of records to get the mean squared error
     MSE = SSR / y.shape[0]
     return MSE
+
+def csvtos(filename):
+    """
+    Converts a .csv file to a usable pandas series.
+        
+        Parameter:
+            filename: String containing the .csv filename
+
+        Returns:
+            series: A pandas series containing the .csv file's content.
+    """
+    
+    if ".csv" not in filename:
+        filename = filename + ".csv"
+
+    dataframe = pd.read_csv(filename, index_col=0)
+    series = dataframe.columns[0]
+    series = dataframe.iloc[:, 0]
+
+    filename = filename.replace(".csv", "")
+    series.name = filename
+
+    return series
+
+def stocsv(series):
+    """
+    Downloads a pandas series as a .csv file in the current location.
+
+        Parameter:
+            series: The pandas series to be downloaded
+    """
+    
+    series.to_csv(series.name, index=True, header=True)
