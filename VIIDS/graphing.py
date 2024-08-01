@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import auc
+import itertools
+import seaborn as sns
 
 # rule of thumb: function(x_name, x_train, x_test, y_name, y_train, ytest, [all other inputs])
 
@@ -205,3 +207,150 @@ def importance_plot(imp_series, figsize=(8, 6)):
     plt.title('Variable Importance')
     plt.tight_layout()
     plt.show()
+
+def histogram_plot(df):
+    """
+    Displays histogram plots for numerical x variables of a given pandas dataframe.
+
+        Parameters:
+            df: The pandas dataframe to be plotted.
+    """
+
+    # Select only numerical columns
+    numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    
+    for x in numerical_cols:
+        df[x].hist(bins=50)
+        plt.xlabel('Value')
+        plt.ylabel('Frequency')
+        plt.title(f'Histogram of {x}')
+        plt.show()
+
+def density_plot(df):
+    """
+    Displays density plots for numerical x variables of a given pandas dataframe.
+
+        Parameters:
+            df: The pandas dataframe to be plotted.
+    """
+
+    # Select only numerical columns
+    numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    
+    for x in numerical_cols:
+        df[x].plot(kind='density')
+        plt.xlabel('Value')
+        plt.title(f'Density Plot of {x}')
+        plt.show()
+
+def box_plot(df):
+    """
+    Displays box plots for numerical x variables of a given pandas dataframe.
+
+        Parameters:
+            df: The pandas dataframe to be plotted.
+    """
+    
+    # Select only numerical columns
+    numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    
+    for x in numerical_cols:
+        df.boxplot(column=x)
+        plt.title(f'Box Plot of {x}')
+        plt.show()
+
+def frequency_table(df):
+    """
+    Prints frequency tables for numerical x variables of a given pandas dataframe.
+
+        Parameters:
+            df: The pandas dataframe to be plotted.
+    """
+
+    # Select only numerical columns
+    numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    
+    for x in numerical_cols:
+        frequency_table = df[x].value_counts()
+        print(frequency_table)
+        
+def scatter_matrix_plot(df):
+    """
+    Displays scatter plots for numerical x variables of a given pandas dataframe.
+
+        Parameters:
+            df: The pandas dataframe to be plotted.
+    """
+    
+    # Select only numerical columns
+    numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    
+    # Generate scatter plots for every pair of numerical columns
+    for (col1, col2) in itertools.combinations(numerical_cols, 2):
+        plt.figure(figsize=(8, 6))
+        plt.scatter(df[col1], df[col2])
+        plt.xlabel(col1)
+        plt.ylabel(col2)
+        plt.title(f'Scatter Plot of {col1} vs {col2}')
+        plt.grid(True)
+        plt.show()
+
+def correlation_coefficient_plot(df):
+    """
+    Displays the correlation coefficients for numerical variables of a given pandas dataframe.
+
+    Parameters:
+        df: The pandas dataframe to be analyzed.
+    """
+    
+    # Select only numerical columns
+    numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    
+    # Initialize a dictionary to store correlation coefficients
+    correlations = {}
+    
+    # Compute correlation coefficients for every pair of numerical columns
+    for col1, col2 in itertools.combinations(numerical_cols, 2):
+        correlation = df[col1].corr(df[col2])
+        correlations[(col1, col2)] = correlation
+    
+    # Print correlation coefficients
+    for (col1, col2), corr in correlations.items():
+        print(f'Correlation between {col1} and {col2}: {corr:.2f}')
+
+def correlation_heatmap(df):
+    """
+    Displays a heatmap of the correlation matrix for numerical variables of a given pandas dataframe.
+
+    Parameters:
+        df: The pandas dataframe to be analyzed.
+    """
+    
+    # Select only numerical columns
+    numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    
+    # Compute the correlation matrix
+    correlation_matrix = df[numerical_cols].corr()
+
+    # Create a heatmap
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1, fmt='.2f', 
+                linewidths=0.5, square=True)
+    plt.title('Correlation Matrix Heatmap')
+    plt.show()
+
+def joint_plot(df):
+    """
+    Displays joint plots for numerical variables of a given pandas dataframe.
+
+    Parameters:
+        df: The pandas dataframe to be plotted.
+    """
+    
+    # Select only numerical columns
+    numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+    
+    # Generate joint plots for every pair of numerical columns
+    for (col1, col2) in itertools.combinations(numerical_cols, 2):
+        sns.jointplot(x=col1, y=col2, data=df, kind='scatter')
+        plt.show()
